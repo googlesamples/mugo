@@ -3,8 +3,7 @@
 Sample on how to transpile a small subset of go to Arduino sketches using [go/ast](https://golang.org/pkg/go/ast/).
 
 ```
-🍡  cat blink.go | go run µ.go  > blink.ino
-🍊  cat blink.ino 
+🍡   cat blink.go | go run µ.go
 void setup() {
   pinMode(13, OUTPUT);
 }
