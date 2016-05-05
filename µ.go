@@ -41,7 +41,7 @@ func transpile(out io.Writer, in io.Reader, debug io.Writer) error {
 
 	for _, d := range f.Decls {
 		if err := handleDecl(out, d); err != nil {
-			return fmt.Errorf("error handling decl %v: %v", err)
+			return fmt.Errorf("error handling decl %v: %v", d, err)
 		}
 	}
 	return nil
@@ -104,13 +104,13 @@ func handleFuncDecl(out io.Writer, fd *ast.FuncDecl) error {
 
 func handleBlockStmt(out io.Writer, bs *ast.BlockStmt) error {
 	for _, s := range bs.List {
+		fmt.Fprintf(out, "  ")
 		switch st := s.(type) {
 		case *ast.ExprStmt:
 			c, ok := st.X.(*ast.CallExpr)
 			if !ok {
 				return fmt.Errorf("unsupported expr: %v", st.X)
 			}
-			fmt.Fprintf(out, "  ")
 			if err := handleCallExpr(out, c); err != nil {
 				return err
 
