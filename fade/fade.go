@@ -16,25 +16,21 @@
 
 package main
 
-const (
-	INPUT  = "input"
-	OUTPUT = "output"
-	HIGH   = 1
-	LOW    = 0
+var (
+	led        = 9
+	brightness = 0
+	fadeAmount = 5
 )
 
-func pinMode(pin int, mode string) {
+func setup() {
+	pinMode(led, OUTPUT)
 }
 
-func digitalWrite(pin int, value int) {
-}
-
-func delay(msec int) {
-}
-
-func main() {
-	setup()
-	for {
-		loop()
+func loop() {
+	analogWrite(led, brightness)
+	brightness = brightness + fadeAmount
+	if brightness == 0 || brightness == 255 {
+		fadeAmount = -fadeAmount
 	}
+	delay(30)
 }

@@ -12,6 +12,7 @@ import (
 var sketches = []string{
 	"blink",
 	"button",
+	"fade",
 }
 
 func TestSketches(t *testing.T) {

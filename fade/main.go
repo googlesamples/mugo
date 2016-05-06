@@ -26,7 +26,7 @@ const (
 func pinMode(pin int, mode string) {
 }
 
-func digitalWrite(pin int, value int) {
+func analogWrite(pin int, value int) {
 }
 
 func delay(msec int) {
