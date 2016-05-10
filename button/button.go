@@ -17,17 +17,22 @@
 package main
 
 const (
-	INPUT  = "input"
-	OUTPUT = "output"
-	HIGH   = 1
-	LOW    = 0
+	buttonPin = 2
+	ledPin    = 13
 )
 
-func pinMode(pin int, mode string) {
+var buttonState = 0
+
+func setup() {
+	pinMode(ledPin, OUTPUT)
+	pinMode(buttonPin, INPUT)
 }
 
-func delay(msec int) {
-}
-
-func digitalWrite(pin int, value int) {
+func loop() {
+	buttonState = digitalRead(buttonPin)
+	if buttonState == HIGH {
+		digitalWrite(ledPin, HIGH)
+	} else {
+		digitalWrite(ledPin, LOW)
+	}
 }
