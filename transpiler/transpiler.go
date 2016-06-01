@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-package main
+package transpiler
 
 import (
 	"bytes"
@@ -23,12 +23,10 @@ import (
 	"go/parser"
 	"go/token"
 	"io"
-	"log"
-	"os"
 	"strings"
 )
 
-func transpile(out io.Writer, in io.Reader, debug io.Writer) error {
+func Transpile(out io.Writer, in io.Reader, debug io.Writer) error {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, "sketch.go", in, 0)
 	if err != nil {
@@ -218,11 +216,5 @@ func handleExpr(out io.Writer, e ast.Expr) error {
 		return handleBasicLit(out, expr)
 	default:
 		return fmt.Errorf("unsupported expr: %#v", e)
-	}
-}
-
-func main() {
-	if err := transpile(os.Stdout, os.Stdin, os.Stderr); err != nil {
-		log.Fatalf("failed to transpile: %v", err)
 	}
 }
