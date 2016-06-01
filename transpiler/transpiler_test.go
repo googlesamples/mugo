@@ -15,7 +15,7 @@ var sketches = []string{
 	"fade",
 }
 
-const sketchDir = "../"
+const sketchDir = "../sketches"
 
 func TestSketches(t *testing.T) {
 	for _, s := range sketches {
