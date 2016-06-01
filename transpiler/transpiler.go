@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+// transpiler convert a subset of Go to Arduino C++ dialect.
 package transpiler
 
 import (
@@ -26,6 +27,8 @@ import (
 	"strings"
 )
 
+// Transpile reads Go source code from the given Reader and writes the
+// transpiled Arduino C++ code to the given Writer.
 func Transpile(out io.Writer, in io.Reader, debug io.Writer) error {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, "sketch.go", in, 0)
