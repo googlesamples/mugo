@@ -1,4 +1,4 @@
-package main
+package transpiler
 
 import (
 	"bytes"
@@ -15,22 +15,24 @@ var sketches = []string{
 	"fade",
 }
 
+const sketchDir = "../sketches"
+
 func TestSketches(t *testing.T) {
 	for _, s := range sketches {
-		g, err := os.Open(filepath.Join(s, s+".go"))
+		g, err := os.Open(filepath.Join(sketchDir, s, s+".go"))
 		if err != nil {
 			t.Errorf("failed to open %s.go: %v", s, err)
 			continue
 		}
 		defer g.Close()
-		bs, err := ioutil.ReadFile(filepath.Join(s, s+".ino"))
+		bs, err := ioutil.ReadFile(filepath.Join(sketchDir, s, s+".ino"))
 		if err != nil {
 			t.Errorf("failed to read %s.ino: %v", s, err)
 			continue
 		}
 		ino := string(bs)
 		var out bytes.Buffer
-		if err := transpile(&out, g, nil); err != nil {
+		if err := Transpile(&out, g, nil); err != nil {
 			t.Errorf("failed to transpile sketch %q: %v", s, err)
 			continue
 		}
