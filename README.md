@@ -1,5 +1,7 @@
 # µgo
 
+[![Build Status](https://travis-ci.org/googlesamples/firebase-arduino.svg?branch=master)](https://travis-ci.org/googlesamples/firebase-arduino)
+
 Sample on how to transpile a small subset of go to Arduino sketches using [go/ast](https://golang.org/pkg/go/ast/).
 
 ```
