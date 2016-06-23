@@ -29,23 +29,19 @@ import (
 
 // Transpile reads Go source code from the given Reader and writes the
 // transpiled Arduino C++ code to the given Writer.
-func Transpile(out io.Writer, in io.Reader, debug io.Writer) error {
+func Transpile(out io.Writer, in io.Reader) (*ast.File, error) {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, "sketch.go", in, 0)
 	if err != nil {
-		return fmt.Errorf("failed to parse file: %v", err)
-	}
-
-	if debug != nil {
-		ast.Fprint(debug, fset, f, nil)
+		return nil, fmt.Errorf("failed to parse file: %s", err)
 	}
 
 	for _, d := range f.Decls {
 		if err := handleDecl(out, d); err != nil {
-			return fmt.Errorf("error handling decl %#v: %v", d, err)
+			return f, fmt.Errorf("error handling decl %#v: %s", d, err)
 		}
 	}
-	return nil
+	return f, nil
 }
 
 func handleDecl(out io.Writer, d ast.Decl) error {

@@ -14,17 +14,43 @@
 // limitations under the License.
 //
 
+// mugo transpiles a subset of the Go language to C++.
+//
+// See package transpiler for more details.
 package main
 
 import (
+	"errors"
+	"flag"
+	"fmt"
+	"go/ast"
+	"io/ioutil"
 	"log"
 	"os"
 
 	"github.com/googlesamples/mugo/transpiler"
 )
 
+func mainImpl() error {
+	verbose := flag.Bool("verbose", false, "log data")
+	flag.Parse()
+	if flag.NArg() != 0 {
+		return errors.New("unexpected arguments")
+	}
+	if !*verbose {
+		log.SetOutput(ioutil.Discard)
+	}
+	f, err := transpiler.Transpile(os.Stdout, os.Stdin)
+	os.Stdout.Sync()
+	if *verbose {
+		ast.Fprint(os.Stderr, nil, f, nil)
+	}
+	return err
+}
+
 func main() {
-	if err := transpiler.Transpile(os.Stdout, os.Stdin, os.Stderr); err != nil {
-		log.Fatalf("failed to transpile: %v", err)
+	if err := mainImpl(); err != nil {
+		fmt.Fprintf(os.Stderr, "mugo: %s\n", err)
+		os.Exit(1)
 	}
 }
