@@ -32,7 +32,7 @@ func TestSketches(t *testing.T) {
 		}
 		ino := string(bs)
 		var out bytes.Buffer
-		if err := Transpile(&out, g, nil); err != nil {
+		if _, err := Transpile(&out, g); err != nil {
 			t.Errorf("failed to transpile sketch %q: %v", s, err)
 			continue
 		}
