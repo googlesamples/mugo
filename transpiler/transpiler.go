@@ -103,6 +103,64 @@ func handleFuncDecl(out io.Writer, fd *ast.FuncDecl) error {
 	return nil
 }
 
+func handleAssignStmt(out io.Writer, st *ast.AssignStmt) error {
+	if st.Tok == token.DEFINE {
+		// FIXME: Symbol table needed here to not emit "auto" again.
+		fmt.Fprint(out, "auto ")
+	}
+
+	if len(st.Lhs) > 1 {
+		return fmt.Errorf("unsupported # of lhs exprs: %v", st.Lhs)
+
+	}
+	if err := handleExpr(out, st.Lhs[0]); err != nil {
+		return fmt.Errorf("error handling left expr %v: %v", st.Lhs[0], err)
+	}
+
+	switch st.Tok {
+	case token.ADD_ASSIGN:
+		fmt.Fprint(out, " += ")
+	case token.SUB_ASSIGN:
+		fmt.Fprint(out, " -= ")
+	case token.MUL_ASSIGN:
+		fmt.Fprint(out, " *= ")
+	case token.QUO_ASSIGN:
+		fmt.Fprint(out, " /= ")
+	case token.REM_ASSIGN:
+		fmt.Fprint(out, " %= ")
+	case token.AND_ASSIGN:
+		fmt.Fprint(out, " &= ")
+	case token.OR_ASSIGN:
+		fmt.Fprint(out, " |= ")
+	case token.XOR_ASSIGN:
+		fmt.Fprint(out, " ^= ")
+	case token.SHL_ASSIGN:
+		fmt.Fprint(out, " <<= ")
+	case token.SHR_ASSIGN:
+		fmt.Fprint(out, " >>= ")
+	case token.AND_NOT_ASSIGN:
+		fmt.Fprint(out, " &= ~(")
+	case token.ASSIGN, token.DEFINE:
+		fmt.Fprint(out, " = ")
+	default:
+		return fmt.Errorf("Unknown assignment token")
+	}
+
+	if len(st.Rhs) > 1 {
+		return fmt.Errorf("unsupported # of rhs exprs: %v", st.Rhs)
+
+	}
+	if err := handleExpr(out, st.Rhs[0]); err != nil {
+		return fmt.Errorf("error handling right expr %v: %v", st.Rhs[0], err)
+	}
+
+	if st.Tok == token.AND_NOT_ASSIGN {
+		fmt.Fprint(out, ")")
+	}
+
+	return nil
+}
+
 func handleBlockStmt(out io.Writer, bs *ast.BlockStmt) error {
 	for _, s := range bs.List {
 		fmt.Fprintf(out, "  ")
@@ -113,20 +171,8 @@ func handleBlockStmt(out io.Writer, bs *ast.BlockStmt) error {
 			}
 			fmt.Fprint(out, ";\n")
 		case *ast.AssignStmt:
-			if len(st.Lhs) > 1 {
-				return fmt.Errorf("unsupported # of lhs exprs: %v", st.Lhs)
-
-			}
-			if err := handleExpr(out, st.Lhs[0]); err != nil {
-				return fmt.Errorf("error handling left expr %v: %v", st.Lhs[0], err)
-			}
-			fmt.Fprintf(out, "=")
-			if len(st.Rhs) > 1 {
-				return fmt.Errorf("unsupported # of rhs exprs: %v", st.Rhs)
-
-			}
-			if err := handleExpr(out, st.Rhs[0]); err != nil {
-				return fmt.Errorf("error handling right expr %v: %v", st.Rhs[0], err)
+			if err := handleAssignStmt(out, st); err != nil {
+				return fmt.Errorf("error handling assign stmt: %v", err)
 			}
 			fmt.Fprint(out, ";\n")
 		case *ast.IfStmt:

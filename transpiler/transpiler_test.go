@@ -15,17 +15,22 @@ var sketches = []string{
 	"fade",
 }
 
-const sketchDir = "../sketches"
+var tests = []string{
+	"language-basics",
+}
 
-func TestSketches(t *testing.T) {
-	for _, s := range sketches {
-		g, err := os.Open(filepath.Join(sketchDir, s, s+".go"))
+const sketchDir = "../sketches"
+const testDir = "../tests"
+
+func runTests(t *testing.T, testList []string, testDir string) {
+	for _, s := range testList {
+		g, err := os.Open(filepath.Join(testDir, s, s+".go"))
 		if err != nil {
 			t.Errorf("failed to open %s.go: %v", s, err)
 			continue
 		}
 		defer g.Close()
-		bs, err := ioutil.ReadFile(filepath.Join(sketchDir, s, s+".ino"))
+		bs, err := ioutil.ReadFile(filepath.Join(testDir, s, s+".ino"))
 		if err != nil {
 			t.Errorf("failed to read %s.ino: %v", s, err)
 			continue
@@ -40,7 +45,14 @@ func TestSketches(t *testing.T) {
 			t.Errorf("expected:\n%s-- got:\n%s", ino, out.String())
 		}
 	}
+}
 
+func TestTests(t *testing.T) {
+	runTests(t, tests, testDir)
+}
+
+func TestSketches(t *testing.T) {
+	runTests(t, sketches, sketchDir)
 }
 
 func nospace(s string) string {
